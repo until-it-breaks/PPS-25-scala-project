@@ -42,6 +42,9 @@ jobs:
         distribution: 'temurin' # o 'zulu'
         java-version: '25'      # imposta la versione Java usata nel progetto
 
+    - name: Setup SBT
+      uses: sbt/setup-sbt@v1
+
     # STEP 3: Compilazione del FAT-JAR con SBT
     # Se usate il plugin sbt-assembly, il comando è "sbt assembly"
     - name: Build Fat-JAR via SBT
