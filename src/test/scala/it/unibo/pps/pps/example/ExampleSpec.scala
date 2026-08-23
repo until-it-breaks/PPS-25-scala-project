@@ -6,5 +6,5 @@ import org.scalatest.matchers.should.Matchers
 class ExampleSpec extends AnyFlatSpec with Matchers:
 
   "A test" should "fail" in {
-    1 + 1 shouldBe 3 // Test volutamente errato
+    1 + 1 shouldBe 4 // Test volutamente errato
   }
