@@ -3,46 +3,64 @@ name: Generate Document PDF & Release
 on:
   push:
     branches: [ main ]
-    tags:
-      - 'v*' # Si attiva quando crei un tag di consegna (es. v1.0)
     paths:
       - 'doc/**'
       - '.github/workflows/pdf.yml'
+    tags:
+      - 'v*'
   pull_request:
     branches: [ main ]
     paths:
       - 'doc/**'
       - '.github/workflows/pdf.yml'
-
+      
   workflow_dispatch:
 
 jobs:
-  generate-pdf:
+  generate-pdf-and-jar:
     runs-on: ubuntu-latest
+    
+    # Permessi di scrittura per poter pubblicare la Release
+    permissions:
+      contents: write
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # Generazione PDF via Pandoc
+    # STEP 1: Generazione del PDF via Pandoc
     - name: Build PDF via Pandoc
       uses: docker://pandoc/extra:latest
       with:
         entrypoint: /bin/sh
         args: -c "pandoc --output=relazione.pdf --pdf-engine=xelatex --toc --number-sections doc/*.md"
 
-    # Salva il PDF negli Artifacts per controllarlo durante il lavoro/PR
+    # STEP 2: Setup JDK (necessario per compilare Scala/Java)
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin' # o 'zulu'
+        java-version: '17'      # imposta la versione Java usata nel progetto
+
+    # STEP 3: Compilazione del FAT-JAR con SBT
+    # Se usate il plugin sbt-assembly, il comando è "sbt assembly"
+    - name: Build Fat-JAR via SBT
+      run: sbt assembly
+
+    # STEP 4: Salva il PDF negli Artifacts per i controlli intermedi
     - name: Upload PDF Artifact
       uses: actions/upload-artifact@v4
       with:
         name: relazione-pdf
         path: relazione.pdf
 
-    # Crea la Release ufficiale solo quando pubblichi un Tag (es. v1.0)
-    - name: Create GitHub Release
+    # STEP 5: Pubblica la Release allegando sia il PDF sia il JAR
+    - name: Attach PDF and JAR to GitHub Release
       if: startsWith(github.ref, 'refs/tags/')
       uses: softprops/action-gh-release@v2
       with:
-        files: relazione.pdf
+        files: |
+          relazione.pdf
+          target/scala-*/*.jar
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
