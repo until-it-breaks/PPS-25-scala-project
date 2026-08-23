@@ -64,6 +64,6 @@ jobs:
       with:
         files: |
           relazione.pdf
-          target/scala-*/*.jar
+          target/**/*.jar
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
