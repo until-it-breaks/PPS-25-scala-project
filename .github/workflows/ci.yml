@@ -23,11 +23,11 @@ jobs:
     steps:
     # STEP 1: Clona il codice sorgente del repository all'interno della macchina virtuale
     - name: Checkout repository
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
 
     # STEP 2: Installa e configura l'ambiente Java (JDK) necessario per Scala e SBT
     - name: Set up JDK 25
-      uses: actions/setup-java@v7
+      uses: actions/setup-java@v5
       with:
         distribution: 'temurin' # Distribuzione JDK OpenSource altamente affidabile
         java-version: '25'      # Versione consigliata di Java
