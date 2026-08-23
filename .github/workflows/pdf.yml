@@ -28,22 +28,12 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v6
 
-    # STEP 2: Esegue l'immagine Docker ufficiale di Pandoc con supporto XeLaTeX
+    # STEP 2: Build PDF via Pandoc usando una shell per espandere doc/*.md
     - name: Build PDF via Pandoc
       uses: docker://pandoc/extra:latest
       with:
-        # Argomenti passati a Pandoc per la compilazione:
-        # --output: nome del file PDF da generare
-        # --pdf-engine: motore di compilazione LaTeX (xelatex supporta font moderni e UTF-8)
-        # --toc: genera automaticamente l'Indice (Table of Contents)
-        # --number-sections: numera automaticamente capitoli e paragrafi (1, 1.1, ecc.)
-        # doc/*.md: unisce tutti i file Markdown presenti nella cartella doc in ordine alfanumerico
-        args: >-
-          --output=relazione.pdf
-          --pdf-engine=xelatex
-          --toc
-          --number-sections
-          doc/*.md
+        entrypoint: /bin/sh
+        args: -c "pandoc --output=relazione.pdf --pdf-engine=xelatex --toc --number-sections doc/*.md"
 
     # STEP 3: Salva il PDF generato negli "Artifacts" della build su GitHub
     - name: Upload PDF Artifact
