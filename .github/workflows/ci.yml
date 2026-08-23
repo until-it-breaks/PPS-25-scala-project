@@ -1,0 +1,44 @@
+# Nome del workflow visibile nella scheda "Actions" di GitHub
+name: Scala CI & PR Verification
+
+# DEFINIZIONE DEGLI EVENTI DI ATTIVAZIONE (TRIGGERS)
+on:
+  # Attiva il workflow quando viene aperta, aggiornata o riaperta una Pull Request
+  # che ha come destinazione il ramo principale ('main')
+  pull_request:
+    branches: main
+
+  # Attiva il workflow sui push diretti in TUTTI i rami, TRANNE 'main'.
+  # Questo serve per testare i branch secondari dei vari studenti prima che aprano la PR
+  push:
+    branches-ignore: main
+
+# DEFINIZIONE DEI JOB DA ESEGUIRE
+jobs:
+  build-and-test:
+    # Specifica l'ambiente virtuale di esecuzione (una macchina virtuale Ubuntu gestita da GitHub)
+    runs-on: ubuntu-latest
+
+    # SEQUENZA DEI PASSI (STEPS) DEL JOB
+    steps:
+    # STEP 1: Clona il codice sorgente del repository all'interno della macchina virtuale
+    - name: Checkout repository
+      uses: actions/checkout@v6
+
+    # STEP 2: Installa e configura l'ambiente Java (JDK) necessario per Scala e SBT
+    - name: Set up JDK 25
+      uses: actions/setup-java@v7
+      with:
+        distribution: 'temurin' # Distribuzione JDK OpenSource altamente affidabile
+        java-version: '25'      # Versione consigliata di Java
+        cache: 'sbt'            # Abilita il caching automatico delle dipendenze sbt: 
+                                # velocizza enormemente le esecuzioni successive scaricando solo le librerie nuove
+
+    # STEP 3: Compila il codice ed esegue l'intera suite di test automatizzati Scala
+    - name: Run Tests
+      run: sbt test
+
+    # STEP 4: Verifica che il progetto sia in grado di generare il Fat-JAR eseguibile senza errori.
+    # Garantisce che la build di sbt-assembly sia sempre valida prima di fare il merge
+    - name: Verify Assembly (fat-JAR build)
+      run: sbt assembly
