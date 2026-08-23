@@ -34,6 +34,9 @@ jobs:
         cache: 'sbt'            # Abilita il caching automatico delle dipendenze sbt: 
                                 # velocizza enormemente le esecuzioni successive scaricando solo le librerie nuove
 
+    - name: Set up sbt
+      uses: sbt/setup-sbt@v1
+
     # STEP 3: Compila il codice ed esegue l'intera suite di test automatizzati Scala
     - name: Run Tests
       run: sbt test
