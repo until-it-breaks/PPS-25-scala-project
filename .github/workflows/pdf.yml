@@ -6,7 +6,7 @@ on:
   # Attiva il workflow su ogni push effettuato direttamente sul ramo principale ('main')
   # (incluso il momento in cui una Pull Request viene approvata ed unita)
   push:
-    branches: main
+    branches: [ main ]
     # FILTRO SUI PERCORSI: Il workflow parte SOLO SE i commit modificano file nella cartella doc/
     # o la configurazione di questo workflow stesso. Evita di rigenerare il PDF se modifichi solo codice Scala!
     paths:
