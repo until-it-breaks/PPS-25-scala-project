@@ -37,10 +37,10 @@ jobs:
 
     # STEP 2: Setup JDK (necessario per compilare Scala/Java)
     - name: Set up JDK
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v5
       with:
         distribution: 'temurin' # o 'zulu'
-        java-version: '17'      # imposta la versione Java usata nel progetto
+        java-version: '25'      # imposta la versione Java usata nel progetto
 
     # STEP 3: Compilazione del FAT-JAR con SBT
     # Se usate il plugin sbt-assembly, il comando è "sbt assembly"
