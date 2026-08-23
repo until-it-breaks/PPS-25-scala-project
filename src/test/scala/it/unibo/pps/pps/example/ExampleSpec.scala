@@ -1,4 +1,4 @@
-package it.unibo.pps.example
+package it.unibo.pps.pps.example
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
