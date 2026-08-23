@@ -1,43 +1,32 @@
-# Nome del workflow visibile nella scheda "Actions" di GitHub
 name: Generate Document PDF
 
-# DEFINIZIONE DEGLI EVENTI DI ATTIVAZIONE (TRIGGERS)
 on:
-  # Attiva il workflow su ogni push effettuato direttamente sul ramo principale ('main')
-  # (incluso il momento in cui una Pull Request viene approvata ed unita)
   push:
     branches: [ main ]
-    # FILTRO SUI PERCORSI: Il workflow parte SOLO SE i commit modificano file nella cartella doc/
-    # o la configurazione di questo workflow stesso. Evita di rigenerare il PDF se modifichi solo codice Scala!
+    paths:
+      - 'doc/**'
+      - '.github/workflows/pdf.yml'
+  pull_request:
+    branches: [ main ]
     paths:
       - 'doc/**'
       - '.github/workflows/pdf.yml'
 
-  # Permette di avviare la generazione del PDF manualmente con un pulsante dall'interfaccia di GitHub
   workflow_dispatch:
 
-# DEFINIZIONE DEI JOB DA ESEGUIRE
 jobs:
   generate-pdf:
-    # Esecuzione su container Linux Ubuntu
     runs-on: ubuntu-latest
 
-    # SEQUENZA DEI PASSI (STEPS) DEL JOB
     steps:
-    # STEP 1: Scarica i file del repository nella macchina virtuale
+    # STEP 1: Corretto in v4
     - name: Checkout repository
-      uses: actions/checkout@v6
+      uses: actions/checkout@v4
 
-    # STEP 2: Esegue l'immagine Docker ufficiale di Pandoc con supporto XeLaTeX
+    # STEP 2: Pandoc Docker Action
     - name: Build PDF via Pandoc
       uses: docker://pandoc/extra:latest
       with:
-        # Argomenti passati a Pandoc per la compilazione:
-        # --output: nome del file PDF da generare
-        # --pdf-engine: motore di compilazione LaTeX (xelatex supporta font moderni e UTF-8)
-        # --toc: genera automaticamente l'Indice (Table of Contents)
-        # --number-sections: numera automaticamente capitoli e paragrafi (1, 1.1, ecc.)
-        # doc/*.md: unisce tutti i file Markdown presenti nella cartella doc in ordine alfanumerico
         args: >-
           --output=relazione.pdf
           --pdf-engine=xelatex
@@ -45,9 +34,9 @@ jobs:
           --number-sections
           doc/*.md
 
-    # STEP 3: Salva il PDF generato negli "Artifacts" della build su GitHub
+    # STEP 3: Upload Artifact
     - name: Upload PDF Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: relazione-pdf       # Nome dell'artefatto scaricabile da GitHub
-        path: relazione.pdf       # Percorso del file generato da allegare
+        name: relazione-pdf
+        path: relazione.pdf
