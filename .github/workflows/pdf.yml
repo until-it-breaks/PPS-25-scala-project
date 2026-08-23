@@ -1,43 +1,48 @@
-# Nome del workflow visibile nella scheda "Actions" di GitHub
-name: Generate Document PDF
+name: Generate Document PDF & Release
 
-# DEFINIZIONE DEGLI EVENTI DI ATTIVAZIONE (TRIGGERS)
 on:
-  # Attiva il workflow su ogni push effettuato direttamente sul ramo principale ('main')
-  # (incluso il momento in cui una Pull Request viene approvata ed unita)
   push:
     branches: [ main ]
-    # FILTRO SUI PERCORSI: Il workflow parte SOLO SE i commit modificano file nella cartella doc/
-    # o la configurazione di questo workflow stesso. Evita di rigenerare il PDF se modifichi solo codice Scala!
+    tags:
+      - 'v*' # Si attiva quando crei un tag di consegna (es. v1.0)
+    paths:
+      - 'doc/**'
+      - '.github/workflows/pdf.yml'
+  pull_request:
+    branches: [ main ]
     paths:
       - 'doc/**'
       - '.github/workflows/pdf.yml'
 
-  # Permette di avviare la generazione del PDF manualmente con un pulsante dall'interfaccia di GitHub
   workflow_dispatch:
 
-# DEFINIZIONE DEI JOB DA ESEGUIRE
 jobs:
   generate-pdf:
-    # Esecuzione su container Linux Ubuntu
     runs-on: ubuntu-latest
 
-    # SEQUENZA DEI PASSI (STEPS) DEL JOB
     steps:
-    # STEP 1: Scarica i file del repository nella macchina virtuale
     - name: Checkout repository
-      uses: actions/checkout@v6
+      uses: actions/checkout@v4
 
-    # STEP 2: Build PDF via Pandoc usando una shell per espandere doc/*.md
+    # Generazione PDF via Pandoc
     - name: Build PDF via Pandoc
       uses: docker://pandoc/extra:latest
       with:
         entrypoint: /bin/sh
         args: -c "pandoc --output=relazione.pdf --pdf-engine=xelatex --toc --number-sections doc/*.md"
 
-    # STEP 3: Salva il PDF generato negli "Artifacts" della build su GitHub
+    # Salva il PDF negli Artifacts per controllarlo durante il lavoro/PR
     - name: Upload PDF Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: relazione-pdf       # Nome dell'artefatto scaricabile da GitHub
-        path: relazione.pdf       # Percorso del file generato da allegare
+        name: relazione-pdf
+        path: relazione.pdf
+
+    # Crea la Release ufficiale solo quando pubblichi un Tag (es. v1.0)
+    - name: Create GitHub Release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v2
+      with:
+        files: relazione.pdf
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
