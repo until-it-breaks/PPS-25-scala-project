@@ -6,12 +6,12 @@ on:
   # Attiva il workflow quando viene aperta, aggiornata o riaperta una Pull Request
   # che ha come destinazione il ramo principale ('main')
   pull_request:
-    branches: main
+    branches: [ main] 
 
   # Attiva il workflow sui push diretti in TUTTI i rami, TRANNE 'main'.
   # Questo serve per testare i branch secondari dei vari studenti prima che aprano la PR
   push:
-    branches-ignore: main
+    branches-ignore: [ main ]
 
 # DEFINIZIONE DEI JOB DA ESEGUIRE
 jobs:
