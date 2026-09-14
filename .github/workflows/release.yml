@@ -1,13 +1,13 @@
-name: Generate Document PDF & Release
+name: PDF & Release
 
 on:
   push:
     branches: [ main ]
-    paths: [ 'doc/**', '.github/workflows/pdf.yml' ]
+    paths: [ 'doc/**' ]
     tags: [ 'v*' ]
   pull_request:
     branches: [ main ]
-    paths: [ 'doc/**', '.github/workflows/pdf.yml' ]
+    paths: [ 'doc/**' ]
   workflow_dispatch:
 
 jobs:
