@@ -3,67 +3,49 @@ name: Generate Document PDF & Release
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'doc/**'
-      - '.github/workflows/pdf.yml'
-    tags:
-      - 'v*'
+    paths: [ 'doc/**', '.github/workflows/pdf.yml' ]
+    tags: [ 'v*' ]
   pull_request:
     branches: [ main ]
-    paths:
-      - 'doc/**'
-      - '.github/workflows/pdf.yml'
-      
+    paths: [ 'doc/**', '.github/workflows/pdf.yml' ]
   workflow_dispatch:
 
 jobs:
-  generate-pdf-and-jar:
+  build:
     runs-on: ubuntu-latest
-    
-    # Permessi di scrittura per poter pubblicare la Release
     permissions:
       contents: write
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-    # STEP 1: Generazione del PDF via Pandoc
-    - name: Build PDF via Pandoc
+    - name: Build PDF
       uses: docker://pandoc/extra:latest
       with:
         entrypoint: /bin/sh
         args: -c "pandoc --output=relazione.pdf --pdf-engine=xelatex --toc --number-sections doc/*.md"
 
-    # STEP 2: Setup JDK (necessario per compilare Scala/Java)
-    - name: Set up JDK
+    - name: Setup Java & SBT
       uses: actions/setup-java@v5
       with:
-        distribution: 'temurin' # o 'zulu'
-        java-version: '25'      # imposta la versione Java usata nel progetto
+        distribution: 'temurin'
+        java-version: '25'
 
-    - name: Setup SBT
-      uses: sbt/setup-sbt@v1
+    - uses: sbt/setup-sbt@v1
 
-    # STEP 3: Compilazione del FAT-JAR con SBT
-    # Se usate il plugin sbt-assembly, il comando è "sbt assembly"
-    - name: Build Fat-JAR via SBT
+    - name: Build JAR
       run: sbt assembly
 
-    # STEP 4: Salva il PDF negli Artifacts per i controlli intermedi
     - name: Upload PDF Artifact
       uses: actions/upload-artifact@v4
       with:
         name: relazione-pdf
         path: relazione.pdf
 
-    # STEP 5: Pubblica la Release allegando sia il PDF sia il JAR
-    - name: Attach PDF and JAR to GitHub Release
+    - name: Create Release
       if: startsWith(github.ref, 'refs/tags/')
       uses: softprops/action-gh-release@v2
       with:
         files: |
           relazione.pdf
           target/**/*.jar
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
