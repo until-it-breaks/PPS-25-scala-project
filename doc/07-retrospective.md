@@ -1,3 +1,3 @@
 # Retrospettiva
 
-Analisi finale dello sviluppo e considerazioni sul backlog.
+Descrizione finale dettagliata dell'andamento dello sviluppo, del backlog, delle iterazioni; commenti finali

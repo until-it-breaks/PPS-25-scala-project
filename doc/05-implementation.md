@@ -1,6 +1,6 @@
 # Implementazione
 
-Descrizione degli aspetti implementativi rilevanti e costrutti idiomatici Scala.
+Descrizione degli aspetti implementativi.
 
 ## Contributi Individuali
 - **Studente 1**: Modulo A

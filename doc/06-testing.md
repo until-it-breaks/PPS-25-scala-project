@@ -1,3 +1,3 @@
 # Testing
 
-Descrizione delle strategie di test e grado di copertura.
+Tecnologie usate, grado di copertura, metodologia usata, esempi rilevanti, altri elementi utili
