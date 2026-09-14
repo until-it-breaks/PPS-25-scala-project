@@ -48,4 +48,4 @@ jobs:
       with:
         files: |
           relazione.pdf
-          target/**/*.jar
+          target/app.jar
