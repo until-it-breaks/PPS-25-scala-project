@@ -1,14 +1,21 @@
 # Requirement Specification
 
-## Requisiti di Business
-Il sistema si propone di risolvere il problema X.
+## Requisiti di business
+???
 
-## Modello del Dominio
-Entità principali individuate nel dominio del problema.
+## Modello del dominio
+???
 
-## Requisiti Funzionali
-- RF1: L'utente può avviare l'applicazione.
-- RF2: Il sistema calcola la somma di due numeri.
+## Requisiti funzionali
 
-## Requisiti Non Funzionali
-- RNF1: Esecuzione in ambiente JVM.
+### utente
+???
+
+### di sistema
+???
+
+## Requisiti Non funzionali
+???
+
+## Requisiti di implementazione
+???
