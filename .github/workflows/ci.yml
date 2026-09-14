@@ -18,5 +18,8 @@ jobs:
           java-version: '25'
           cache: 'sbt'
 
+      - name: Set up sbt
+        uses: sbt/setup-sbt@v1
+
       - name: Test & Build
         run: sbt test assembly
